@@ -9,6 +9,7 @@ export {
     };
 
     const tool = fmt("%s/bhr.py", @DIR);
+    const mode = "queue" &redef; #or block
     const block_types: set[Notice::Type] = {} &redef;
 }
 
@@ -28,7 +29,8 @@ hook Notice::policy(n: Notice::Info)
     add n$email_delay_tokens["bhr"];
     local nsub = n?$sub ? n$sub : "-";
     local stdin = string_cat(cat(n$src), "\n", cat(n$note), "\n", n$msg, "\n", nsub, "\n");
-    when (local res = Exec::run([$cmd=tool, $stdin=stdin])){
+    local cmd = fmt("%s %s", tool, mode);
+    when (local res = Exec::run([$cmd=cmd, $stdin=stdin])){
         local note = tmp_notice_storage_bhr[uid];
         if(res?$stdout) {
             output = string_cat("BHR result:\n", join_string_vec(res$stdout, "\n"),"\n");
