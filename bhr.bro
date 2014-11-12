@@ -40,6 +40,6 @@ hook Notice::policy(n: Notice::Info)
             output = string_cat("BHR errors:\n", join_string_vec(res$stderr, "\n"),"\n");
             note$email_body_sections[|note$email_body_sections|] = output;
         }
-        delete tmp_notice_storage_bhr[uid]$email_delay_tokens["bhr"];
+        delete note$email_delay_tokens["bhr"];
     }
 }
