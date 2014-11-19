@@ -1,4 +1,4 @@
-BHR Integration for BRO
+Bro Integration for BHR
 =======================
 
 Usage
