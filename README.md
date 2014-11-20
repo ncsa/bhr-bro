@@ -8,6 +8,11 @@ In local.bro:
 
     @load ./bhr-bro
 
+    redef BHR::block_types += {
+        Scan::Port_Scan,
+        Scan::Address_Scan,
+    };
+
 There are two modes of operation:
 
 * Queue based: Bro -> dirq + dirq -> BHR API
