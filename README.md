@@ -13,6 +13,13 @@ In local.bro:
         Scan::Address_Scan,
     };
 
+and if your default block time is less than 15 minutes:
+
+    redef Notice::type_suppression_intervals += {
+        [Scan::Port_Scan]    = 800sec,
+        [Scan::Address_Scan] = 800sec,
+    };
+
 There are two modes of operation:
 
 * Queue based: Bro -> dirq + dirq -> BHR API
