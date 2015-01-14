@@ -27,6 +27,7 @@ def run_queue_once():
     from dirq.QueueSimple import QueueSimple
     dirq = QueueSimple(QDIR)
     dirq.purge(30,60)
+    did_work = False
     for name in dirq:
         if not dirq.lock(name):
             continue
@@ -37,12 +38,16 @@ def run_queue_once():
         block(**item)
         signal.alarm(0)
         dirq.remove(name)
+        did_work = True
+
+    return did_work
 
 def run_queue():
     #run queue for 10 minutes
     for x in range(60*10/SLEEP):
-        time.sleep(SLEEP)
-        run_queue_once()
+        did_work = run_queue_once()
+        if not did_work:
+            time.sleep(SLEEP)
 
 def main():
     try:
