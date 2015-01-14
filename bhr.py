@@ -12,7 +12,7 @@ QDIR = "/var/lib/brobhrqueue"
 def block(ip, comment, duration):
     from bhr_client.rest import login_from_env
     client = login_from_env()
-    duration = int(duration) # Bro sends it as ##.0
+    duration = int(float(duration)) # Bro sends it as ##.0
     block = client.block(cidr=ip, source='bro', why=comment, duration=duration, autoscale=1)
     return True
 
