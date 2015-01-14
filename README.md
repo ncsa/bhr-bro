@@ -16,7 +16,11 @@ In local.bro:
     #optional
     redef BHR::default_block_duration = 60mins;
     redef BHR::block_durations += {
-        [Scan::Port_Scan]    = 30mins;
+        [Scan::Port_Scan]    = 30mins,
+    };
+    redef BHR::do_country_scaling = T;
+    redef BHR::country_scaling += {
+        ["CN"]  = 8;
     };
 
 and if your default block time is less than 15 minutes:

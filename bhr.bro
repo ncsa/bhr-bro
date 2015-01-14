@@ -13,6 +13,30 @@ export {
     const block_types: set[Notice::Type] = {} &redef;
     const default_block_duration: interval = 15mins &redef;
     const block_durations: table[Notice::Type] of interval = {} &redef;
+    const country_scaling: table[string] of count = {} &redef;
+    const do_country_scaling: bool = F;
+}
+
+function get_duration(n: Notice::Info): interval
+{
+    local duration = default_block_duration;
+
+    if ( n$note in block_durations) {
+        duration = block_durations[n$note];
+    }
+
+    if (!do_country_scaling)
+        return duration;
+
+    local location = lookup_location(n$src);
+    if (!location?$country_code)
+        return duration;
+
+    local cc = location$country_code;
+    if (cc in country_scaling) {
+        duration = duration * country_scaling[cc];
+    }
+    return duration;
 }
 
 hook Notice::policy(n: Notice::Info)
@@ -22,11 +46,7 @@ hook Notice::policy(n: Notice::Info)
     if ( Site::is_local_addr(n$src) || Site::is_neighbor_addr(n$src) )
         return;
 
-    local duration = default_block_duration;
-
-    if ( n$note in block_durations) {
-        duration = block_durations[n$note];
-    }
+    local duration = get_duration(n);
 
     add n$actions[ACTION_BHR];
     #add n$actions[Notice::ACTION_EMAIL];
