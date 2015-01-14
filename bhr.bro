@@ -14,7 +14,7 @@ export {
     const default_block_duration: interval = 15mins &redef;
     const block_durations: table[Notice::Type] of interval = {} &redef;
     const country_scaling: table[string] of count = {} &redef;
-    const do_country_scaling: bool = F;
+    const do_country_scaling: bool = F &redef;
 }
 
 function get_duration(n: Notice::Info): interval
