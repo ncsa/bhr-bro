@@ -7,19 +7,18 @@ import sys
 import time
 
 SLEEP = 2
-DURATION=60*15
 QDIR = "/var/lib/brobhrqueue"
 
-def block(ip, comment):
+def block(ip, comment, duration):
     from bhr_client.rest import login_from_env
     client = login_from_env()
-    block = client.block(cidr=ip, source='bro', why=comment, duration=DURATION, autoscale=1)
+    block = client.block(cidr=ip, source='bro', why=comment, duration=duration, autoscale=1)
     return True
 
-def queue(ip, comment):
+def queue(ip, comment, duration):
     from dirq.QueueSimple import QueueSimple
     dirq = QueueSimple(QDIR)
-    rec = dict(ip=ip, comment=comment)
+    rec = dict(ip=ip, comment=comment, duration=duration)
     dirq.add(json.dumps(rec))
     return True
 
@@ -53,15 +52,15 @@ def main():
 
     if mode in ['block', 'queue']:
         lines = sys.stdin.read().strip().split("\n")
-        src, note, msg, sub = lines
+        src, note, msg, sub, duration = lines
 
         #sub is not currently used
         comment = "%s: %s" % (note, msg)
 
         if mode == "block":
-            block(src, comment)
+            block(src, comment, duration)
         elif mode == "queue":
-            queue(src, comment)
+            queue(src, comment, duration)
 
     if mode == 'run_queue':
         run_queue()

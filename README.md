@@ -13,6 +13,12 @@ In local.bro:
         Scan::Address_Scan,
     };
 
+    #optional
+    redef BHR::default_block_duration = 60mins;
+    redef BHR::block_durations += {
+        [Scan::Port_Scan]    = 30mins;
+    };
+
 and if your default block time is less than 15 minutes:
 
     redef Notice::type_suppression_intervals += {
