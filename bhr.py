@@ -19,6 +19,7 @@ handler.setFormatter(formatter)
 handler.setLevel(logging.INFO)
 log = logging.getLogger("BHR_CLIENT")
 log.addHandler(handler)
+logging.getLogger("requests").setLevel(logging.WARNING)
 
 def block(ip, comment, duration):
     from bhr_client.rest import login_from_env
