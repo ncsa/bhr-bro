@@ -9,6 +9,17 @@ import time
 SLEEP = 2
 QDIR = "/var/lib/brobhrqueue"
 
+import logging
+import logging.handlers
+
+formatter = logging.Formatter('%(name)s: %(levelname)s %(message)s')
+logging.basicConfig(level=logging.DEBUG, format="%(name)s %(levelname)s %(message)s")
+handler = logging.handlers.SysLogHandler(address='/dev/log')
+handler.setFormatter(formatter)
+handler.setLevel(logging.INFO)
+log = logging.getLogger("BHR_CLIENT")
+log.addHandler(handler)
+
 def block(ip, comment, duration):
     from bhr_client.rest import login_from_env
     client = login_from_env()
@@ -19,7 +30,7 @@ def block(ip, comment, duration):
 def queue(ip, comment, duration):
     from dirq.QueueSimple import QueueSimple
     dirq = QueueSimple(QDIR)
-    rec = dict(ip=ip, comment=comment, duration=duration)
+    rec = dict(ip=ip, comment=comment, duration=duration, ts=time.time())
     dirq.add(json.dumps(rec))
     return True
 
@@ -34,10 +45,18 @@ def run_queue_once():
         data = dirq.get(name)
         print data
         item = json.loads(data)
+
         signal.alarm(15)
-        block(**item)
+        queue_ts = item['ts']
+        start = time.time()
+
+        block(item['ip'], item['comment'], item['duration'])
+        end = time.time()
         signal.alarm(0)
+
         dirq.remove(name)
+
+        log.info("block ip=%s queue_latency=%0.2f api_latency=%0.2f", item['ip'], start-queue_ts, end-start)
         did_work = True
 
     return did_work
