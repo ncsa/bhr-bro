@@ -6,7 +6,7 @@ import signal
 import sys
 import time
 
-SLEEP = 2
+SLEEP = 1
 QDIR = "/var/lib/brobhrqueue"
 
 import logging
