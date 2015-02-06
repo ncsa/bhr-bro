@@ -51,7 +51,16 @@ def run_queue_once():
         queue_ts = item['ts']
         start = time.time()
 
-        block(item['ip'], item['comment'], item['duration'])
+        try :
+            block(item['ip'], item['comment'], item['duration'])
+        except Exception, e:
+            #Was this a whitelisted host or similarly invalid request
+            #Versus a server error?
+            if e.response.status_code != 400:
+                raise
+            if 'non_field_errors' not in e.response.json():
+                raise
+            print "Ignored error", e, e.response.json()
         end = time.time()
         signal.alarm(0)
 
