@@ -56,11 +56,10 @@ def run_queue_once():
         except Exception, e:
             #Was this a whitelisted host or similarly invalid request
             #Versus a server error?
-            if e.response.status_code != 400:
+            if e.response.status_code != 400 or 'non_field_errors' not in e.response.json():
+                log.exception("API Error")
                 raise
-            if 'non_field_errors' not in e.response.json():
-                raise
-            print "Ignored error", e, e.response.json()
+            log.info("Ignored API Error %s", e.response.json())
         end = time.time()
         signal.alarm(0)
 
