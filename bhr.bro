@@ -13,7 +13,7 @@ export {
     const block_types: set[Notice::Type] = {} &redef;
     const default_block_duration: interval = 15mins &redef;
     const block_durations: table[Notice::Type] of interval = {} &redef;
-    const country_scaling: table[string] of count = {} &redef;
+    const country_scaling: table[string] of double = {} &redef;
     const do_country_scaling: bool = F &redef;
 }
 
