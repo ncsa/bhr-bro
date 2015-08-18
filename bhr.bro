@@ -8,7 +8,8 @@ export {
         ACTION_BHR,
     };
 
-    const tool = fmt("%s/bhr.py", @DIR);
+    const tool_filename = "bhr.py" &redef; #so bhr-bro.pex can be used instead
+    const tool = fmt("%s/%s", @DIR, tool_filename);
     const mode = "queue" &redef; #or block
     const block_types: set[Notice::Type] = {} &redef;
     const default_block_duration: interval = 15mins &redef;
