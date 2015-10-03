@@ -9,7 +9,6 @@ export {
     };
 
     const tool_filename = "bhr.py" &redef; #so bhr-bro.pex can be used instead
-    const tool = fmt("%s/%s", @DIR, tool_filename);
     const mode = "queue" &redef; #or block
     const block_types: set[Notice::Type] = {} &redef;
     const default_block_duration: interval = 15mins &redef;
@@ -48,6 +47,7 @@ hook Notice::policy(n: Notice::Info)
         return;
 
     local duration = get_duration(n);
+    local tool = fmt("%s/%s", @DIR, tool_filename);
 
     add n$actions[ACTION_BHR];
     #add n$actions[Notice::ACTION_EMAIL];
