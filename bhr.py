@@ -59,7 +59,8 @@ def run_queue_once():
             if hasattr(e, 'response') and e.response and e.response.status_code == 400 and 'non_field_errors' in e.response.json():
                 log.info("Ignored API Error %s", e.response.json())
             else:
-                log.exception("API Error")
+                text = e.response.text if hasattr(e, 'response') else ''
+                log.exception("API Error. HTTP Response: %r", text)
                 raise
         end = time.time()
         signal.alarm(0)
