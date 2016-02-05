@@ -20,7 +20,7 @@ In local.bro:
     };
     redef BHR::do_country_scaling = T;
     redef BHR::country_scaling += {
-        ["CN"]  = 8;
+        ["CN"]  = 8,
     };
 
 and if your default block time is less than 15 minutes:
