@@ -39,17 +39,23 @@ function get_duration(n: Notice::Info): interval
     return duration;
 }
 
-hook Notice::policy(n: Notice::Info)
+hook Notice::policy(n: Notice::Info) &priority=10
 {
-    if ( n$note !in block_types )
+    if ( n$note in block_types )
+        add n$actions[ACTION_BHR];
+}
+
+hook Notice::policy(n: Notice::Info) &priority=-5
+{
+    if ( ACTION_BHR !in n$actions )
         return;
+
     if ( Site::is_local_addr(n$src) || Site::is_neighbor_addr(n$src) )
         return;
 
     local duration = get_duration(n);
     local tool = fmt("%s/%s", @DIR, tool_filename);
 
-    add n$actions[ACTION_BHR];
     #add n$actions[Notice::ACTION_EMAIL];
     local uid = unique_id("");
     tmp_notice_storage_bhr[uid] = n;
