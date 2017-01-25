@@ -10,12 +10,14 @@ export {
     type Info: record {
         ## Timestamp when the log line was finished and written.
         ts:         time   &log;
-        ## How long the process took to run
+        ## The address that was blocked
+        src:        addr &log;
+        ## The reason it was blocked
+        why:        string &log;
+        ## The duration it was blocked for
         duration:   interval &log;
-        ## The stdout from the process
-        out:        string &log &optional;
-        ## The stderr from the process
-        err:        string &log &optional;
+        ## How long the process took to run
+        latency:    interval &log;
     };
 
     const tool_filename = "bhr.py" &redef; #so bhr-bro.pex can be used instead
@@ -68,19 +70,18 @@ hook Notice::policy(n: Notice::Info)
     local cmd = fmt("%s %s", tool, mode);
 
     local start_time = current_time();
-    when (local res = Exec::run([$cmd=cmd, $stdin=stdin])){
-        local finish_time = current_time();
-        local l: Info;
-        l$ts = network_time();
-        l$duration = finish_time - start_time;
-        if(res?$stdout) {
-            l$out = join_string_vec(res$stdout, "\n");
-        }
-        if(res?$stderr) {
-            l$err = join_string_vec(res$stderr, "\n");
-        }
-        Log::write(LOG, l);
-    }
+    piped_exec(cmd, stdin);
+    local finish_time = current_time();
+
+    local l: Info;
+
+    l$ts = network_time();
+    l$src = n$src;
+    l$duration = duration;
+    l$why = fmt("%s %s", n$note, n$msg);
+    l$latency = finish_time - start_time;
+
+    Log::write(LOG, l);
 }
 
 event bro_init()
