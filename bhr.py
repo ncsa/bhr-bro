@@ -44,7 +44,7 @@ def run_queue_once():
         if not dirq.lock(name):
             continue
         data = dirq.get(name)
-        print data
+        log.debug("item: %s", data)
         item = json.loads(data)
 
         signal.alarm(15)
@@ -53,7 +53,7 @@ def run_queue_once():
 
         try :
             block(item['ip'], item['comment'], item['duration'])
-        except Exception, e:
+        except Exception as e:
             #Was this a whitelisted host or similarly invalid request
             #Versus a server error?
             if hasattr(e, 'response') and e.response is not None and e.response.status_code == 400 and 'non_field_errors' in e.response.json():
