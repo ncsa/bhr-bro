@@ -52,11 +52,20 @@ function get_duration(n: Notice::Info): interval
     return duration;
 }
 
-hook Notice::policy(n: Notice::Info)
+hook Notice::policy(n: Notice::Info) &priority=10
 {
     if ( n$note !in block_types )
         return;
     if ( Site::is_local_addr(n$src) || Site::is_neighbor_addr(n$src) )
+        return;
+
+    add n$actions[ACTION_BHR];
+}
+
+
+hook Notice::policy(n: Notice::Info) &priority=-1
+{
+    if ( ACTION_BHR !in n$actions )
         return;
 
     local duration = get_duration(n);
