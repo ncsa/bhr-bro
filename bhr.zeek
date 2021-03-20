@@ -84,7 +84,7 @@ hook Notice::policy(n: Notice::Info)
     Log::write(LOG, l);
 }
 
-event bro_init()
+event zeek_init()
 {
     Log::create_stream(LOG, [$columns=Info]);
 }
